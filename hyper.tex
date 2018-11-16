@@ -1,0 +1,327 @@
+% Template for ICASSP-2018 paper; to be used with:
+%          spconf.sty  - ICASSP/ICIP LaTeX style file, and
+%          IEEEbib.bst - IEEE bibliography style file.
+% --------------------------------------------------------------------------
+\documentclass{article}
+\usepackage{spconf,amsmath,graphicx}
+\usepackage{lineno,hyperref}
+\usepackage{subfig}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{multirow}
+%\usepackage{diagbox}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{algorithmic}
+\usepackage{array}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage[english]{babel}
+\usepackage{algorithm,algorithmic} 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\DeclareMathOperator*{\argmax}{argmax}
+% Example definitions.
+% --------------------
+\def\x{{\mathbf x}}
+\def\L{{\cal L}}
+
+% Title.
+% ------
+\title{CMVTF: }
+%
+% Single address.
+% ---------------
+\name{Yipeng Liu,Sixing Zeng \thanks{Thanks to XYZ agency for funding.}}
+\address{School of Information and Communication Engineering / Center for robotics, \\University of Electronic Science and Technology of China (UESTC), Chengdu, China}
+
+%
+% For example:
+% ------------
+%\address{School\\
+%	Department\\
+%	Address}
+%
+% Two addresses (uncomment and modify for two-address case).
+% ----------------------------------------------------------
+%\twoauthors
+%  {A. Author-one, B. Author-two\sthanks{Thanks to XYZ agency for funding.}}
+%	{School A-B\\
+%	Department A-B\\
+%	Address A-B}
+%  {C. Author-three, D. Author-four\sthanks{The fourth author performed the work
+%	while at ...}}
+%	{School C-D\\
+%	Department C-D\\
+%	Address C-D}
+%
+\begin{document}
+%\ninept
+%
+\maketitle
+%
+\begin{abstract}
+Coupled Matrix-Vector Tensor Factorization(CMVTF)  is proposed for fusing a low-spatial-resolution hyperspectral image(HSI) and a high-spatial-resolution multispectral image(MSI) to produce a super-resolution image (SRI) with high spatial and spectral resolutions.In the proposed CMVTF method,We consider the HSI and MSI as a three-dimensional tensor and can be decomposed into a sum of several component tensor , and each component tensor is from the outer produt of a vector(endmember) and a matrix(corresponding abundances). This coupled tensor factorization model is consistent with linear spectral mixture model and experiments demonstrate the superiority of the proposed CMVTF method over current state-of-the-art HSI-MSI fusion approaches.
+\end{abstract}
+%
+\begin{keywords}
+One, two, three, four, five
+\end{keywords}
+%
+\section{Introduction}
+\label{sec:intro}
+
+These guidelines include complete descriptions of the fonts, spacing, and
+related information for producing your proceedings manuscripts. Please follow
+them and if you have any questions, direct them to Conference Management
+Services, Inc.: Phone +1-979-846-6800 or email
+to \\\texttt{papers@2018.ieeeicassp.org}.
+
+\section{Notations and Preliminaries}
+\label{sec:pagestyle}
+
+Firstly we would like to give the notations to be used. A vector, a matrix, and a tensor are written as  $  \mathbf{a} $,  $  \mathbf{A} $, and $\mathcal{A}$, respectively. A $ N $-order tensor $ \mathcal{A} \in \mathbb{R}^{ I_{1} \times\cdots\times I_{N}}$, and $I_{n}$ is the dimensional size. The vectorization of tensor $\mathcal{A}$ is denoted as $\operatorname {Vec}({\mathcal{A}})$. 
+$\langle{\mathcal A, \mathcal B}\rangle =\langle \operatorname{Vec}(\mathcal{A}),\operatorname{Vec}(\mathcal{B})\rangle  $ denotes the tensor inner product. The Frobenius norm of $\mathcal{ A} $ is denoted as $\lVert{\mathcal A}\rVert_{\text F}$ =$\langle{\mathcal A,\mathcal A}\rangle^\frac{1}{2} $. The Kronecker product of two tensors can be denoted as $\mathcal{C}=\mathcal{A}\otimes\mathcal{B}\in\mathbb{R}^{I_{1}J_{1}\times\cdots\times I_{N}J_{N}}$, where $\mathcal{A}\in\mathbb{R}^{I_{1}\times\cdots\times I_{N}}$, $\mathcal{B}\in \mathbb{R}^{J_{1}\times\cdots\times J_{N}}$. For $M$ same tensors, the Kronecker product can be defined as $\mathcal{C}=\mathcal{A}_{1}\otimes\cdots\otimes\mathcal{A}_{M}=\otimes_{m=1}^{M}\mathcal{A}_{m}\in\mathbb{R}^{I_{1}^{M}\times\cdots\times I_{N}^{M}}$, with $\mathcal{A}\in\mathbb{R}^{I_{1}\times\cdots\times I_{N}}$.
+The Hadamard product of two tensors is defined as $(\mathcal{A} \odot \mathcal{B})_{i_1, \cdots , i_N}=\mathcal{A}_{i_1, \cdots , i_N}\mathcal{B}_{i_1, \cdots , i_N}$, where $ {\mathcal{A}}_{i_1, \cdots , i_N} $ and $ {\mathcal{B}}_{i_1, \cdots , i_N} $ are the entries of $ {\mathcal{A}} $ and $ {\mathcal{B}} $. 
+The operator $\operatorname{reshape}$ turns a matrix or a vector to a tensor, e.g., we can obtain a tensor $\mathcal{X}$ by the operating $\operatorname{reshape}(\mathbf{X}, I_{1}, I_{2},I_{3})$ from a matrix $\mathbf{X}\in \mathbb{R}^{I_{1}I_{2}\times I_{3}}$ or $\operatorname{reshape}(\mathbf{x}, I_{1}, I_{2},I_{3})$ from a vector $\mathbf{x}\in \mathbb{R}^{I_{1}I_{2}I_{3}}$. The mide-$n$ tensor-matrix product can be presented as $\mathcal{C}=\mathcal{A}\times_{n}\mathbf{B}$, where $\mathcal{A}\in \mathbb{R}^{I_{1} \times\cdots\times I_{N}}$, $\mathbf{B}\in \mathbb{R}^{J\times I_{n}}$, $\mathcal{C}\in \mathbb{R}^{I_{1} \times\cdots\times I_{n-1}\times J\times I_{n+1} \times I_{N}}$.
+
+\textbf{Definition 1} (\emph{\textbf{Mode-k unfolding}})~\cite{cichocki2014tensor}
+\emph{For an  $N$-order tensor $\mathcal{A} \in \mathbb{R}^{\emph{I}_{1} \times\cdots\times \emph{I}_{N}}$, its mode-k unfolding is defined as a matrix }
+\begin{equation}
+\textbf{A}_{[k]} \in \mathbb{R}^{I_k\times I_{1} \cdots I_{k-1}I_{k+1}\cdots I_N}\nonumber
+\end{equation}
+\emph{with entries}
+\begin{equation}
+a_{i_1i_2\cdots i_N}=\textbf{A}_{[k]}( i_k,\overline{i_{1}\cdots i_{k-1}i_{k+1}\cdots i_N}) \nonumber.
+\end{equation}
+
+
+\textbf{Definition 2} (\emph{\textbf{Tensor contracted  product}})~\cite{bibid}
+\emph{For multiway arrays} $\mathcal{A} \in \mathbb{R}^{\emph{I}_1\times \cdots\times \emph{I}_N}$ \emph{and} $\mathcal{B} \in \mathbb{R}^{\emph{J}_1\times\cdots\times \emph{J}_L}$, with some common mode such as $I_{1}=J_{1},\cdots I_{n}=J_{n}$. \emph{The contracted product} $\mathcal{C} \in \mathbb{R}^{\emph{I}_{n+1}\times \cdots\times \emph{I}_N\times \emph{J}_{n+1}\times \cdots\times \emph{J}_L}$ \emph{can be written as}
+\begin{equation}
+\mathcal{C}=<\mathcal{A},\mathcal{B}>_n\nonumber
+\end{equation}
+\emph{	with entries}
+\begin{eqnarray}
+&\quad& c_{i_{n+1},\cdots,i_N,j_{n+1},\cdots,j_L}\nonumber
+=\sum_{i_1=1,\cdots, i_n=1}^{I_1,\cdots,I_n}a_{i_1,\cdots,i_N}b_{j_1,\cdots,j_L}\nonumber.
+\end{eqnarray}	
+
+\textbf{Definition 3} (\emph{\textbf{Tensor in Graph formats}})~\cite{bibid}
+\emph{Given any graph} $G=(\mathbb{V},\mathbb{E})$, \emph{where} $\mathbb{V}=\{1,\cdots,N\}$ \emph{and} $\mathbb{E}=\{\{i_{1},j_{1}\},\cdots,\{i_{M},j_{M}\}\}$ \emph{are the set of} $N$ \emph{vertices and} $M$ \emph{edges, respectively. $\hat{\mathbb{E}}=\{(i_{1},j_{1}),\cdots,(i_{M},j_{M})\}$ are the edges for arbitrary directions. For each} $n\in\mathbb{V}$, \emph{the tensor product space is defined as:}
+\begin{equation*}
+(\otimes_{m\in \text{IN}(n)}\mathbb{E}_{m})\otimes\mathbb{V}_{n}\otimes(\otimes_{m\in \text{OUT}(n)}\mathbb{E}_{m}^{*})
+\end{equation*}
+\emph{where} $\mathbb{E}_{m}^{*}$ \emph{is the dual space of} $\mathbb{E}_{m}$,  $\text{IN}(i)=\{j\in\{1,\cdots,M\}:(j,i)\in\hat{\mathbb{E}}\}$, \emph{and} $\text{OUT}(i)=\{j\in\{1,\cdots,M\}:(i,j)\in\hat{\mathbb{E}}\}$.
+
+\emph{The contraction map for tensor can be defined as:}
+\begin{eqnarray}
+K_{G}:&&\otimes_{n=1}^{N}((\otimes_{m\in \text{IN}(n)}\mathbb{E}_{m})\otimes\mathbb{V}_{n}\otimes(\otimes_{m\in \text{OUT}(n)}\mathbb{E}_{m}^{*}))\nonumber\\
+&&\rightarrow \otimes_{n=1}^{N} \mathbb{V}_{n}\nonumber
+\end{eqnarray}
+\emph{Contracting along all edges, we can obtain a tensor in}
+$\mathbb{V}_{1}\otimes\cdots\otimes\mathbb{V}_{N}$.
+
+\textbf{Definition 4} (\emph{\textbf{Complete-graph tensor network}})
+\emph{For a multiway array} $\mathcal{A} \in \mathbb{R}^{I_{1} \times\cdots\times I_{N}}$, \emph{the complete-graph tensor network in graph is defined as}
+\begin{equation}
+\mathcal{A}=K_{G}(\otimes_{n=1}^{N}(\mathcal{U}_{n})\nonumber).
+\end{equation}	
+\emph{where all edges} $\mathbb{E}$ \emph{for complete graph are assigned to} $\text{IN}$, \emph{and} $\mathcal{U}_{n}=((\otimes_{m\in\text{IN}_{(n)}}\mathbb{E}_{m})\otimes\mathbb{V}_{n})\in\mathbb{R}^{r^{m}\times I_{n}}$,  $n=1, \cdots, N$ \emph{are the cores, and the rank of complete graph tensor network is defined by the weigh of edges.} \emph{The graphical of 4-order complete graph tensor network can be seen in Fig. \ref{fig:TT decomposition}}.
+
+\textbf{Proposition 1} (\emph{\textbf{Edge removal}})~\cite{bibid} \emph{For an N-order tensor} $\mathcal{A}\in\mathbb{R}^{I_{1}\times I_{N}}$, \emph{which can be represented by the} 
+$G=(\mathbb{V},\mathbb{E})$  \emph{with} $N$ \emph{vertices and} $M$ \emph{edges. Let} $G_{r}=(r_{1},\cdots,r_{M})$ \emph{are the weight of edges. Suppose that the edge} $e\in\mathbb{E}$\emph{ has weight} $r_{1}=1$ \emph{and} $G^{'}=(\mathbb{V},\mathbb{E}\setminus \{e\})$ \emph{is the graph obtained by removing the edge} $e$ from $G$ \emph{and suppose} $G^{'}$ \emph{has no isolated vertices. Then}
+\begin{equation*}
+\mathcal{A}=K_{G}\simeq K_{G^{'}}.
+\end{equation*}
+
+With edge removal, tensor train decomposition and tensor ring decomposition are special cases of complete-graph tensor network. An example of the equal conversion can be seen as Fig. (\ref{fig:edgeremoval}).
+
+\section{CMVTF FOR DATA FUSION}
+\label{sec:format}`
+
+In this paper we consider hyperspectral image and multispectral image as a three-dimension tensor. Hyperspectral imae($\mathcal{X}\in \mathbb{R}^{I_H\times J_H\times  K} $) is low-spatial-resolution but high-spectral-resolution and multispectral($\mathcal{Y} \in \mathbb{R}^{I\times J\times  K_M} $) image is high-spatial-resolution but low-spectral-resolution . The aim of data fusion is to estimate a super-resolution image($\mathcal{Z} \in \mathbb{R}^{I\times J\times  K} $) that with high resolution both in spatial and spectral. $I,J$ and $K$ denote the dimensions of two spatial and one spectral coordinates,respectively.Obviously,$I_H \ll I , J_H \ll J $ and $K_M \ll K $ are satisfied by the spcetral and spatital resloutions of the two images.
+
+
+\section{PAGE TITLE SECTION}
+\label{sec:pagestyle}
+
+The paper title (on the first page) should begin 1.38 inches (35 mm) from the
+top edge of the page, centered, completely capitalized, and in Times 14-point,
+boldface type.  The authors' name(s) and affiliation(s) appear below the title
+in capital and lower case letters.  Papers with multiple authors and
+affiliations may require two or more lines for this information. Please note
+that papers should not be submitted blind; include the authors' names on the
+PDF.
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{lll}
+		\toprule
+		$\bf Algorithm $ : CNMVF algorithm  \\
+		
+		\midrule
+		$ \bf Input: HSI,MSI,D1,D2,D3,\lambda $ \\
+		$ \bf While $ not converged do\\
+		1. $ A =	$ arg $ \min_A || \mathrm{Y_h}^{(1)}-S_{11}(D_1A)^T||_F^2+\lambda||\mathrm{Y_m}^{(1)}-S_{12}A^T||_F^2 $ \\
+		
+		2. $ B =$ arg $	\min_B || \mathrm{Y_h}^{(2)}-S_{21}(D_2B)^T||_F^2+\lambda||\mathrm{Y_m}^{(2)}-S_{22}B^T||_F^2 $\\
+		3. $ C =$ arg $	\min_C || \mathrm{Y_h}^{(3)}-S_{31}C^T||_F^2+\lambda||\mathrm{Y_m}^{(3)}-S_{32}(D_3C)^T||_F^2 $\\
+		\bf End while \\
+		\bottomrule	
+	\end{tabular}
+\end{table}
+
+
+\section{TYPE-STYLE AND FONTS}
+\label{sec:typestyle}
+
+To achieve the best rendering both in printed proceedings and electronic proceedings, we
+strongly encourage you to use Times-Roman font.  In addition, this will give
+the proceedings a more uniform look.  Use a font that is no smaller than nine
+point type throughout the paper, including figure captions.
+
+In nine point type font, capital letters are 2 mm high.  {\bf If you use the
+smallest point size, there should be no more than 3.2 lines/cm (8 lines/inch)
+vertically.}  This is a minimum spacing; 2.75 lines/cm (7 lines/inch) will make
+the paper much more readable.  Larger type sizes require correspondingly larger
+vertical spacing.  Please do not double-space your paper.  TrueType or
+Postscript Type 1 fonts are preferred.
+
+The first paragraph in each section should not be indented, but all the
+following paragraphs within the section should be indented as these paragraphs
+demonstrate.
+
+\section{MAJOR HEADINGS}
+\label{sec:majhead}
+
+Major headings, for example, "1. Introduction", should appear in all capital
+letters, bold face if possible, centered in the column, with one blank line
+before, and one blank line after. Use a period (".") after the heading number,
+not a colon.
+
+\subsection{Subheadings}
+\label{ssec:subhead}
+
+Subheadings should appear in lower case (initial word capitalized) in
+boldface.  They should start at the left margin on a separate line.
+ 
+\subsubsection{Sub-subheadings}
+\label{sssec:subsubhead}
+
+Sub-subheadings, as in this paragraph, are discouraged. However, if you
+must use them, they should appear in lower case (initial word
+capitalized) and start at the left margin on a separate line, with paragraph
+text beginning on the following line.  They should be in italics.
+
+\section{PRINTING YOUR PAPER}
+\label{sec:print}
+
+Print your properly formatted text on high-quality, 8.5 x 11-inch white printer
+paper. A4 paper is also acceptable, but please leave the extra 0.5 inch (12 mm)
+empty at the BOTTOM of the page and follow the top and left margins as
+specified.  If the last page of your paper is only partially filled, arrange
+the columns so that they are evenly balanced if possible, rather than having
+one long column.
+
+In LaTeX, to start a new column (but not a new page) and help balance the
+last-page column lengths, you can use the command ``$\backslash$pagebreak'' as
+demonstrated on this page (see the LaTeX source below).
+
+\section{PAGE NUMBERING}
+\label{sec:page}
+
+Please do {\bf not} paginate your paper.  Page numbers, session numbers, and
+conference identification will be inserted when the paper is included in the
+proceedings.
+
+\section{ILLUSTRATIONS, GRAPHS, AND PHOTOGRAPHS}
+\label{sec:illust}
+
+Illustrations must appear within the designated margins.  They may span the two
+columns.  If possible, position illustrations at the top of columns, rather
+than in the middle or at the bottom.  Caption and number every illustration.
+All halftone illustrations must be clear black and white prints.  Colors may be
+used, but they should be selected so as to be readable when printed on a
+black-only printer.
+
+Since there are many ways, often incompatible, of including images (e.g., with
+experimental results) in a LaTeX document, below is an example of how to do
+this \cite{Lamp86}.
+
+\section{FOOTNOTES}
+\label{sec:foot}
+
+Use footnotes sparingly (or not at all!) and place them at the bottom of the
+column on the page on which they are referenced. Use Times 9-point type,
+single-spaced. To help your readers, avoid using footnotes altogether and
+include necessary peripheral observations in the text (within parentheses, if
+you prefer, as in this sentence).
+
+% Below is an example of how to insert images. Delete the ``\vspace'' line,
+% uncomment the preceding line ``\centerline...'' and replace ``imageX.ps''
+% with a suitable PostScript file name.
+% -------------------------------------------------------------------------
+
+
+
+
+% To start a new column (but not a new page) and help balance the last-page
+% column length use \vfill\pagebreak.
+% -------------------------------------------------------------------------
+%\vfill
+%\pagebreak
+
+\section{COPYRIGHT FORMS}
+\label{sec:copyright}
+
+You must submit your fully completed, signed IEEE electronic copyright release
+form when you submit your paper. We {\bf must} have this form before your paper
+can be published in the proceedings.
+
+\section{RELATION TO PRIOR WORK}
+\label{sec:prior}
+
+The text of the paper should contain discussions on how the paper's
+contributions are related to prior work in the field. It is important
+to put new work in  context, to give credit to foundational work, and
+to provide details associated with the previous work that have appeared
+in the literature. This discussion may be a separate, numbered section
+or it may appear elsewhere in the body of the manuscript, but it must
+be present.
+
+You should differentiate what is new and how your work expands on
+or takes a different path from the prior studies. An example might
+read something to the effect: "The work presented here has focused
+on the formulation of the ABC algorithm, which takes advantage of
+non-uniform time-frequency domain analysis of data. The work by
+Smith and Cohen \cite{Lamp86} considers only fixed time-domain analysis and
+the work by Jones et al \cite{C2} takes a different approach based on
+fixed frequency partitioning. While the present study is related
+to recent approaches in time-frequency analysis [3-5], it capitalizes
+on a new feature space, which was not considered in these earlier
+studies."
+
+\vfill\pagebreak
+
+\section{REFERENCES}
+\label{sec:refs}
+
+List and number all bibliographical references at the end of the
+paper. The references can be numbered in alphabetic order or in
+order of appearance in the document. When referring to them in
+the text, type the corresponding reference number in square
+brackets as shown at the end of this sentence \cite{C2}. An
+additional final page (the fifth page, in most cases) is
+allowed, but must contain only references to the prior
+literature.
+
+% References should be produced using the bibtex program from suitable
+% BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
+% style file from IEEE produces unsorted bibliography list.
+% -------------------------------------------------------------------------
+\bibliographystyle{IEEEbib}
+\bibliography{strings,refs}
+
+\end{document}
